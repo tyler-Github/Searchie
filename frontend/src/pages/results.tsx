@@ -10,13 +10,14 @@ const Results = () => {
   const [results, setResults] = useState<any[]>([]);
   const [filteredResults, setFilteredResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState<string>(
-    (query as string) || "",
+    (query as string) || ""
   );
   const [currentPage, setCurrentPage] = useState<number>(
-    parseInt(queryPage as string, 10) || 1,
+    parseInt(queryPage as string, 10) || 1
   );
   const [totalPages, setTotalPages] = useState<number>(1);
 
@@ -54,7 +55,7 @@ const Results = () => {
   useEffect(() => {
     if (activeTab === "images") {
       const imagesResults = results.filter(
-        (result) => result.imageUrls && result.imageUrls.length > 0,
+        (result) => result.imageUrls && result.imageUrls.length > 0
       );
       setFilteredResults(imagesResults);
     } else {
@@ -66,7 +67,7 @@ const Results = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(
-        `/results?query=${encodeURIComponent(searchQuery.trim())}&page=1`,
+        `/results?query=${encodeURIComponent(searchQuery.trim())}&page=1`
       );
     }
   };
@@ -75,19 +76,25 @@ const Results = () => {
     if (newPage < 1 || newPage > totalPages) return;
     setCurrentPage(newPage);
     router.push(
-      `/results?query=${encodeURIComponent(searchQuery.trim())}&page=${newPage}`,
+      `/results?query=${encodeURIComponent(searchQuery.trim())}&page=${newPage}`
     );
   };
 
   if (loading)
-    return <p className="mt-10 text-center text-white">Loading...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="spinner"></div>
+      </div>
+    );
   if (error) return <p className="mt-10 text-center text-red-500">{error}</p>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-300">
       <header className="flex items-center justify-between bg-gray-800 bg-opacity-50 px-6 py-4">
         <div className="flex flex-grow items-center space-x-8">
-          <img src="/searchie.png" alt="Searchie Logo" className="h-8" />
+          <a href="/" className="flex items-center">
+            <img src="/searchie.png" alt="Searchie Logo" className="h-8" />
+          </a>
           <form
             onSubmit={handleSearch}
             className="relative max-w-3xl flex-grow"
@@ -180,7 +187,11 @@ const Results = () => {
                       key={index}
                       src={url}
                       alt={`Image ${index + 1}`}
-                      className="h-24 w-full rounded object-cover transition-transform duration-200 hover:scale-105"
+                      loading="lazy" // Native lazy loading
+                      className={`h-24 w-full rounded object-cover transition-transform duration-200 hover:scale-105 ${
+                        isLoaded ? "opacity-100" : "opacity-0"
+                      }`} // Fade in the image when loaded
+                      onLoad={() => setIsLoaded(true)} // Once loaded, hide the skeleton
                     />
                   ))}
                 </div>
