@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaSearch, FaRegImage, FaMicrophone } from "react-icons/fa";
 import { AiOutlineMenu } from "react-icons/ai";
+import Head from "next/head";
 
 const Results = () => {
   const router = useRouter();
@@ -14,10 +15,10 @@ const Results = () => {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState<string>(
-    (query as string) || ""
+    (query as string) || "",
   );
   const [currentPage, setCurrentPage] = useState<number>(
-    parseInt(queryPage as string, 10) || 1
+    parseInt(queryPage as string, 10) || 1,
   );
   const [totalPages, setTotalPages] = useState<number>(1);
 
@@ -55,7 +56,7 @@ const Results = () => {
   useEffect(() => {
     if (activeTab === "images") {
       const imagesResults = results.filter(
-        (result) => result.imageUrls && result.imageUrls.length > 0
+        (result) => result.imageUrls && result.imageUrls.length > 0,
       );
       setFilteredResults(imagesResults);
     } else {
@@ -67,7 +68,7 @@ const Results = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(
-        `/results?query=${encodeURIComponent(searchQuery.trim())}&page=1`
+        `/results?query=${encodeURIComponent(searchQuery.trim())}&page=1`,
       );
     }
   };
@@ -76,13 +77,13 @@ const Results = () => {
     if (newPage < 1 || newPage > totalPages) return;
     setCurrentPage(newPage);
     router.push(
-      `/results?query=${encodeURIComponent(searchQuery.trim())}&page=${newPage}`
+      `/results?query=${encodeURIComponent(searchQuery.trim())}&page=${newPage}`,
     );
   };
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+      <div className="flex min-h-screen items-center justify-center bg-gray-900">
         <div className="spinner"></div>
       </div>
     );
@@ -90,6 +91,65 @@ const Results = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-gray-300">
+      <Head>
+        <title>{searchQuery} - Best Search Results | Searchie</title>
+        <meta
+          name="description"
+          content={`Find the best results for "${searchQuery}" with Searchie. Explore a wide range of options and get accurate and relevant information quickly.`}
+        />
+        <meta
+          name="keywords"
+          content={`${searchQuery}, search results, find ${searchQuery}, Searchie`}
+        />
+        <meta name="robots" content="index, follow" />
+
+        <meta
+          property="og:title"
+          content={`${searchQuery} - Best Search Results | Searchie`}
+        />
+        <meta
+          property="og:description"
+          content={`Find the best results for "${searchQuery}" with Searchie. Explore a wide range of options and get accurate and relevant information quickly.`}
+        />
+        <meta
+          property="og:url"
+          content={`https://searchie.vmgware.dev/search?query=${encodeURIComponent(searchQuery)}`}
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Searchie" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content={`${searchQuery} - Best Search Results | Searchie`}
+        />
+        <meta
+          name="twitter:description"
+          content={`Find the best results for "${searchQuery}" with Searchie. Explore a wide range of options and get accurate and relevant information quickly.`}
+        />
+        <meta
+          name="twitter:url"
+          content={`https://searchie.vmgware.dev/search?query=${encodeURIComponent(searchQuery)}`}
+        />
+
+        <link
+          rel="canonical"
+          href={`https://searchie.vmgware.dev/search?query=${encodeURIComponent(searchQuery)}`}
+        />
+
+        <script type="application/ld+json">
+          {{
+            "@context": "https://schema.org",
+            "@type": "SearchAction",
+            target: {
+              "@type": "EntryPoint",
+              urlTemplate:
+                "https://searchie.vmgware.dev/search?query={search_term_string}",
+            },
+            "query-input": "required name=search_term_string",
+          }}
+        </script>
+      </Head>
       <header className="flex items-center justify-between bg-gray-800 bg-opacity-50 px-6 py-4">
         <div className="flex flex-grow items-center space-x-8">
           <a href="/" className="flex items-center">
