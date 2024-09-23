@@ -76,7 +76,7 @@ const Home = () => {
 
         <link rel="canonical" href="https://searchie.vmgware.dev/" />
 
-        <script type="application/ld+json">
+        {/* <script type="application/ld+json">
           {`
         {
           "@context": "https://schema.org",
@@ -88,7 +88,7 @@ const Home = () => {
           "query-input": "required name=search_term_string"
         }
       `}
-        </script>
+        </script> */}
       </Head>
       <header className="flex items-center justify-between bg-gray-800 bg-opacity-50 px-6 py-4">
         <div className="flex items-center space-x-4">

@@ -46,6 +46,16 @@ COPY --from=frontend-builder /app/frontend /app/frontend
 # Install production dependencies for backend
 WORKDIR /app/backend
 RUN npm install --only=production
+RUN npx puppeteer browsers install
+
+WORKDIR /app
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+RUN apt-get update && apt-get install curl gnupg -y \
+  && curl --location --silent https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+  && apt-get update \
+  && apt-get install google-chrome-stable -y --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
 
 # Install nginx
 WORKDIR /app
@@ -54,7 +64,15 @@ RUN apt-get update && apt-get install -y nginx
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/sites-available/default
 
+# Copy the entrypoint script
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set the entrypoint script as the entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
 EXPOSE 80
 
-# Start both backend and frontend
-CMD ["sh", "-c", "npm start --prefix /app/backend & npm run dev --prefix /app/frontend"]
+CMD ["nginx", "-g", "daemon off;"]

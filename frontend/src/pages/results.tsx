@@ -137,7 +137,7 @@ const Results = () => {
           href={`https://searchie.vmgware.dev/search?query=${encodeURIComponent(searchQuery)}`}
         />
 
-        <script type="application/ld+json">
+        {/* <script type="application/ld+json">
           {{
             "@context": "https://schema.org",
             "@type": "SearchAction",
@@ -148,7 +148,7 @@ const Results = () => {
             },
             "query-input": "required name=search_term_string",
           }}
-        </script>
+        </script> */}
       </Head>
       <header className="flex items-center justify-between bg-gray-800 bg-opacity-50 px-6 py-4">
         <div className="flex flex-grow items-center space-x-8">
