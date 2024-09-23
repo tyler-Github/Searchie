@@ -13,9 +13,6 @@ RUN npm install
 # Copy backend source code
 COPY backend/ .
 
-# Build backend (if necessary)
-RUN npm run build
-
 # Stage 2: Build the frontend
 FROM node:18 AS frontend-builder
 
@@ -50,11 +47,14 @@ COPY --from=frontend-builder /app/frontend /app/frontend
 WORKDIR /app/backend
 RUN npm install --only=production
 
-# Expose backend port (adjust if needed)
-EXPOSE 5000
+# Install nginx
+WORKDIR /app
+RUN apt-get update && apt-get install -y nginx
 
-# Expose frontend port (adjust if needed)
-EXPOSE 3000
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/sites-available/default
+
+EXPOSE 80
 
 # Start both backend and frontend
 CMD ["sh", "-c", "npm start --prefix /app/backend & npm run dev --prefix /app/frontend"]
